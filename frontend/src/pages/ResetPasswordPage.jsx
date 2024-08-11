@@ -29,20 +29,9 @@ const ResetPasswordPage = () => {
     if (resetPasswordSuccess) {
       toast({
         title: "Password reset successful.",
-        description: (
-          <Box>
-            You can now log in with your new password.
-            <Button
-              mt={2}
-              colorScheme="teal"
-              onClick={() => navigate("/login")}
-            >
-              Go to Login
-            </Button>
-          </Box>
-        ),
+        description: "You can now log in with your new password.",
         status: "success",
-        duration: 10000,
+        duration: 3000,
         isClosable: true,
       });
     } else if (error) {
@@ -50,7 +39,7 @@ const ResetPasswordPage = () => {
         title: "Error.",
         description: error || "An error occurred.",
         status: "error",
-        duration: 5000,
+        duration: 2000,
         isClosable: true,
       });
     }
@@ -117,6 +106,18 @@ const ResetPasswordPage = () => {
             Reset Password
           </Button>
         </form>
+        {resetPasswordSuccess ? (
+          <Button
+            mt={4}
+            colorScheme="teal"
+            isLoading={loading}
+            width="full"
+            size="lg"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </Button>
+        ) : null}
       </VStack>
     </Box>
   );
