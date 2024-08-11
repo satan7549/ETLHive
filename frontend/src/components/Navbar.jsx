@@ -4,10 +4,17 @@ import {
   Flex,
   Spacer,
   useBreakpointValue,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 const Navbar = () => {
   const { logout, initialStates } = useAuth();
@@ -15,37 +22,88 @@ const Navbar = () => {
 
   const isDesktop = useBreakpointValue({ base: false, md: true });
 
+  // Use color mode values for consistent theming
+  const bgColor = useColorModeValue("teal.500", "teal.600");
+  const menuBgColor = useColorModeValue("teal.500", "teal.700");
+  const hoverBgColor = useColorModeValue("teal.600", "teal.800");
+  const textColor = useColorModeValue("white", "gray.200");
+
   return (
-    <Box p={4} bg="teal.500" color="white">
+    <Box p={4} bg={bgColor} color={textColor}>
       <Flex align="center">
         <Link to="/">
-          <Button variant="link" colorScheme="whiteAlpha">
+          <Button variant="link" color={textColor}>
             Home
           </Button>
         </Link>
         <Spacer />
-        {isDesktop && (
+        {isDesktop ? (
           <>
-            <Link to="/leads">
-              <Button variant="link" colorScheme="whiteAlpha">
-                Leads
-              </Button>
-            </Link>
             {token ? (
-              <Button colorScheme="whiteAlpha" onClick={logout}>
+              <Button color={textColor} onClick={logout} variant="outline">
                 Logout
               </Button>
             ) : (
               <>
                 <Link to="/login">
-                  <Button colorScheme="whiteAlpha">Login</Button>
+                  <Button color={textColor} variant="outline" mr={4}>
+                    Login
+                  </Button>
                 </Link>
                 <Link to="/signup">
-                  <Button colorScheme="whiteAlpha">Sign Up</Button>
+                  <Button color={textColor} variant="outline">
+                    Sign Up
+                  </Button>
                 </Link>
               </>
             )}
           </>
+        ) : (
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              icon={<HamburgerIcon />}
+              variant="outline"
+              color={textColor}
+              _hover={{ bg: hoverBgColor }}
+              _active={{ bg: hoverBgColor }}
+            />
+            <MenuList bg={menuBgColor} borderColor={hoverBgColor}>
+              {token ? (
+                <MenuItem
+                  color={textColor}
+                  _hover={{ bg: hoverBgColor }}
+                  _focus={{ bg: hoverBgColor }}
+                  onClick={logout}
+                >
+                  Logout
+                </MenuItem>
+              ) : (
+                <>
+                  <MenuItem
+                    color={textColor}
+                    bg={bgColor}
+                    _hover={{ bg: hoverBgColor }}
+                    _focus={{ bg: hoverBgColor }}
+                    as={Link}
+                    to="/login"
+                  >
+                    Login
+                  </MenuItem>
+                  <MenuItem
+                    color={textColor}
+                    bg={bgColor}
+                    _hover={{ bg: hoverBgColor }}
+                    _focus={{ bg: hoverBgColor }}
+                    as={Link}
+                    to="/signup"
+                  >
+                    Sign Up
+                  </MenuItem>
+                </>
+              )}
+            </MenuList>
+          </Menu>
         )}
       </Flex>
     </Box>
