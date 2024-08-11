@@ -99,7 +99,7 @@ const Login = () => {
           </InputGroup>
         </FormControl>
         <ReCAPTCHA
-          sitekey="6LdvtyMqAAAAABHMs-0S28ipbDhUNcpWtL0Yo5po"
+          sitekey={`${process.env.REACT_APP_CAPTCHA_SITE_KEY}`}
           onChange={onCaptchaChange}
         />
         <Text mt={4}>

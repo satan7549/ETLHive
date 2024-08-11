@@ -1,10 +1,9 @@
 import axios from "axios";
 
 // Define the base URL for the API
-// export const baseURL =
-//   "https://ecommerce-assignment-codemancers-backnd.onrender.com";
+export const baseURL = process.env.REACT_APP_BACKEND_BASE_URL;
 // Uncomment the line below for local development
-export const baseURL = "http://localhost:8080";
+// export const baseURL = "http://localhost:8080";
 
 // Create an Axios instance
 const api = axios.create({
