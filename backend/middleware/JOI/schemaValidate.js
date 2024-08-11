@@ -58,21 +58,17 @@ const passwordSchema = Joi.object({
 
 const leadSchema = Joi.object({
   name: Joi.string().min(3).max(50).required(),
-  number: Joi.string().min(3).max(50),
-  email: Joi.string().email(),
-  product: Joi.array().items(Joi.string()),
-})
-  .or("email", "number")
-  .messages({
-    "object.missing": "Either email or number is required",
-  });
+  number: Joi.string().min(3).max(50).required(),
+  email: Joi.string().email().required(),
+  product: Joi.array().items(Joi.string()).optional(),
+});
 
 const leadUpdateSchema = Joi.object({
   name: Joi.string().min(3).max(50).optional(),
   number: Joi.string().min(3).max(50).optional(),
   email: Joi.string().email().optional(),
   product: Joi.array().items(Joi.string()).optional(),
-})
+});
 
 module.exports = {
   signUpSchema,

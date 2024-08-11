@@ -8,7 +8,7 @@ const {
 } = require("../middleware/JOI/schemaValidate");
 const LeadModel = require("../models/leadsModel");
 
-// Create a lead
+// Create Lead
 const createLead = async (req, res) => {
   try {
     const { valid, errors, value } = validateData(leadSchema, req.body);
@@ -17,14 +17,11 @@ const createLead = async (req, res) => {
       return sendResponse(res, httpStatus.BAD_REQUEST, false, errors);
     }
 
-    const { number, email } = value;
+    const { number } = value;
 
     // Check if lead already exists
-    const existingLead = await LeadModel.findOne({
-      $or: [{ number: number }, { email: email }],
-    });
-    
- 
+    const existingLead = await LeadModel.findOne({ number });
+
     if (existingLead) {
       return sendResponse(
         res,
@@ -34,6 +31,7 @@ const createLead = async (req, res) => {
       );
     }
 
+    // Create the new lead
     const lead = await LeadModel.create(value);
 
     sendResponse(res, httpStatus.CREATED, true, messages.LEAD_CREATED, lead);
@@ -49,11 +47,28 @@ const createLead = async (req, res) => {
   }
 };
 
-
 // Get all leads
 const getLeads = async (req, res) => {
   try {
-    const leads = await LeadModel.find();
+    const { search = "", sortOrder = "asc" } = req.query;
+
+    // Build search query
+    const searchQuery = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } },
+            { number: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    // Ensure sortOrder is valid (either 'asc' or 'desc')
+    const validSortOrder = sortOrder === "desc" ? -1 : 1;
+
+    const leads = await LeadModel.find(searchQuery).sort({
+      name: validSortOrder,
+    });
 
     sendResponse(res, httpStatus.OK, true, messages.FETCH_LEAD, leads);
   } catch (error) {
