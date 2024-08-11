@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const userRoutes = require("./routes/userRoutes");
+const leadRoutes = require("./routes/leadRoutes");
+const isUserAuthenticated = require("./middleware/auth/auth");
 const app = express();
 
 app.use(
@@ -17,11 +19,9 @@ app.get("/", (req, res) => {
 });
 
 /* import all routes */
-
 app.use("/user", userRoutes);
-// app.use("/product", product);
+app.use(isUserAuthenticated);
+app.use("/lead", leadRoutes);
 
-// Middleware for Errors
-// app.use(ErrorHandlerMiddleware);
 
 module.exports = app;

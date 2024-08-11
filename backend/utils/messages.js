@@ -9,6 +9,12 @@ const messages = {
   SERVER_ERROR: "Server error.",
   USER_NOT_FOUND: "User not found. You need to signup first.",
   PRODUCT_NOT_FOUND: "Product not found",
+  LEAD_EXISTS:"Lead already exists",
+  LEAD_CREATED: "Lead created successfully.",
+  FETCH_LEAD: "Leads retrieved successfully.",
+  LEAD_NOT_FOUND: "Lead not found",
+  LEAD_UPDATE_SUCCESS: "Lead updated successfully.",
+  LEAD_DELETE_SUCCESS: "Lead deleted successfully.",
 };
 
 module.exports = messages;

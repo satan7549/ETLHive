@@ -143,9 +143,7 @@ const forgotPassword = async (req, res) => {
     await userExists.save({ validateBeforeSave: false });
 
     // Create reset URL
-    const resetUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/user/reset-password/${resetToken}`;
+    const resetUrl = `${process.env.CLIENT_BASE_URL}/reset-password/${resetToken}`;
 
     const message = `Your password reset link is as follows:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
 

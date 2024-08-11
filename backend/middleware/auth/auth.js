@@ -26,7 +26,7 @@ const isUserAuthenticated = async (req, res, next) => {
     }
 
     // Save user inside req.user
-    req.user = user;
+    req.user = user; 
 
     next();
   } catch (error) {
