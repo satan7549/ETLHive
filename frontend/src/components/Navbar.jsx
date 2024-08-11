@@ -10,7 +10,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
-  const { token, logout } = useAuth();
+  const { logout, initialStates } = useAuth();
+  const { token } = initialStates;
 
   const isDesktop = useBreakpointValue({ base: false, md: true });
 

@@ -17,7 +17,7 @@ import {
 import ReCAPTCHA from "react-google-recaptcha";
 import { useAuth } from "../context/AuthContext";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -26,7 +26,9 @@ const Login = () => {
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
-  const { login, loading, error } = useAuth();
+  const navigate = useNavigate();
+  const { login, initialStates } = useAuth();
+  const { token, error, loading } = initialStates;
 
   useEffect(() => {
     if (error) {
@@ -35,8 +37,15 @@ const Login = () => {
         status: "error",
         duration: 3000,
       });
+    } else if (token) {
+      toast({
+        title: "Login successful",
+        status: "success",
+        duration: 3000,
+      });
+      navigate("/");
     }
-  }, [error, toast]);
+  }, [error, token, toast, navigate]);
 
   const onCaptchaChange = (value) => {
     setCaptcha(value);
@@ -58,16 +67,7 @@ const Login = () => {
       return;
     }
 
-    try {
-      await login(username, password, captcha);
-      toast({
-        title: "Login successful",
-        status: "success",
-        duration: 3000,
-      });
-    } catch {
-      // Error handling is done in AuthProvider
-    }
+    await login(username, password, captcha);
   };
 
   return (
@@ -112,7 +112,7 @@ const Login = () => {
         </Button>
         <Text mt={4}>
           New User?{" "}
-          <Link as={RouterLink} to="/login" color="blue.600">
+          <Link as={RouterLink} to="/signup" color="blue.600">
             Sign Up
           </Link>
         </Text>

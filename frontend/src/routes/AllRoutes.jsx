@@ -4,6 +4,8 @@ import SignUpPage from "../pages/SignUpPage";
 import { LoginPage } from "../pages/LoginPage";
 import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
+import Home from "../pages/Home";
+import PrivateRoute from "./PrivateRoute";
 
 const AllRoutes = () => {
   return (
@@ -12,6 +14,14 @@ const AllRoutes = () => {
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+      <Route
+        path="/"
+        element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 };

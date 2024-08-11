@@ -15,7 +15,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { useAuth } from "../context/AuthContext";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
 const SignUp = () => {
@@ -24,7 +24,9 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
-  const { signup, loading, error } = useAuth();
+  const navigate = useNavigate();
+  const { signup, initialStates } = useAuth();
+  const { token, error, loading } = initialStates;
 
   useEffect(() => {
     if (error) {
@@ -33,8 +35,15 @@ const SignUp = () => {
         status: "error",
         duration: 3000,
       });
+    } else if (token) {
+      toast({
+        title: "Sign up successful",
+        status: "success",
+        duration: 3000,
+      });
+      navigate("/"); // Redirect to home page or desired page
     }
-  }, [error, toast]);
+  }, [error, token, toast, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,16 +60,7 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      await signup(name, username, password);
-      toast({
-        title: "Sign up successful",
-        status: "success",
-        duration: 3000,
-      });
-    } catch {
-      // Error handling is done in AuthProvider
-    }
+    await signup(name, username, password);
   };
 
   return (
