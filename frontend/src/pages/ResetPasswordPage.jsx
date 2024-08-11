@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   useToast,
   Input,
@@ -13,41 +12,63 @@ import {
   VStack,
   Heading,
 } from "@chakra-ui/react";
-import { useParams } from "react-router-dom";
-import { baseURL } from "../utils/api";
+import { useNavigate, useParams } from "react-router-dom";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useAuth } from "../context/AuthContext";
 
 const ResetPasswordPage = () => {
   const { token } = useParams();
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
+  const { resetPassword, initialStates } = useAuth();
+  const { resetPasswordSuccess, error, loading } = initialStates;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      await axios.put(`${baseURL}/user/reset-password/${token}`, { password });
+  useEffect(() => {
+    if (resetPasswordSuccess) {
       toast({
         title: "Password reset successful.",
-        description: "You can now log in with your new password.",
+        description: (
+          <Box>
+            You can now log in with your new password.
+            <Button
+              mt={2}
+              colorScheme="teal"
+              onClick={() => navigate("/login")}
+            >
+              Go to Login
+            </Button>
+          </Box>
+        ),
         status: "success",
-        duration: 5000,
+        duration: 10000,
         isClosable: true,
       });
-    } catch (error) {
+    } else if (error) {
       toast({
         title: "Error.",
-        description: error.response?.data?.message || "An error occurred.",
+        description: error || "An error occurred.",
         status: "error",
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setLoading(false);
     }
+  }, [resetPasswordSuccess, error, toast, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!token || !password) {
+      toast({
+        title:
+          (!token && "token required") || (!password && "password required"),
+        status: "error",
+        duration: 3000,
+      });
+      return;
+    }
+    await resetPassword(token, password);
   };
 
   return (

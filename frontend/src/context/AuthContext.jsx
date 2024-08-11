@@ -8,6 +8,8 @@ const initialState = {
   token: localStorage.getItem("token") || null,
   error: null,
   loading: false,
+  forgotPassword: false,
+  resetPasswordSuccess: false,
 };
 
 export const AuthProvider = ({ children }) => {
@@ -78,13 +80,18 @@ export const AuthProvider = ({ children }) => {
       ...prevState,
       loading: true,
       error: null,
+      forgotPassword: false,
     }));
     try {
-      const response = await axios.post(`${baseURL}/user/forgot-password`, {
+      await axios.post(`${baseURL}/user/forgot-password`, {
         username,
         email,
       });
-      console.log(response.data);
+      setInitialState((prevState) => ({
+        ...prevState,
+        loading: false,
+        forgotPassword: true,
+      }));
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "Forgot Password failed";
@@ -92,6 +99,35 @@ export const AuthProvider = ({ children }) => {
         ...prevState,
         error: errorMessage,
         loading: false,
+        forgotPassword: false,
+      }));
+    }
+  };
+
+  const resetPassword = async (token, password) => {
+    setInitialState((prevState) => ({
+      ...prevState,
+      loading: true,
+      error: null,
+      resetPasswordSuccess: false,
+    }));
+    try {
+      await axios.put(`${baseURL}/user/reset-password/${token}`, { password });
+      setInitialState((prevState) => ({
+        ...prevState,
+        loading: false,
+        resetPasswordSuccess: true,
+      }));
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Forgot Password failed";
+
+      console.log(errorMessage, "errorMessage");
+      setInitialState((prevState) => ({
+        ...prevState,
+        error: errorMessage,
+        loading: false,
+        resetPasswordSuccess: false,
       }));
     }
   };
@@ -116,7 +152,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ initialStates, signup, login, logout, passwordForgot }}
+      value={{
+        initialStates,
+        signup,
+        login,
+        logout,
+        passwordForgot,
+        resetPassword,
+      }}
     >
       {children}
     </AuthContext.Provider>
