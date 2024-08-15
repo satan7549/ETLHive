@@ -1,4 +1,4 @@
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 const app = require("./app");
 const ConnectDB = require("./config/db.connect");
@@ -13,8 +13,14 @@ process.on("uncaughtException", (err) => {
 });
 
 const server = app.listen(port, async () => {
-  await ConnectDB();
-  console.log(`Server running on http://localhost:${port}`);
+  try {
+    const res = await ConnectDB();
+    console.log(res);
+    console.log(`Server running on http://localhost:${port}`);
+  } catch (err) {
+    console.error(`Error starting server: ${err.message}`);
+    process.exit(1);
+  }
 });
 
 process.on("unhandledRejection", (err) => {
